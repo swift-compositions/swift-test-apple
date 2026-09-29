@@ -15,7 +15,7 @@ let package = Package(
     products: [.library(name: "Test Apple", targets: ["Test Apple"])],
     dependencies: [
         .package(
-            url: "https://github.com/swift-primitives/swift-test.git",
+            url: "https://github.com/swift-molecules/swift-test.git",
             branch: "main"
         ),
         .package(
