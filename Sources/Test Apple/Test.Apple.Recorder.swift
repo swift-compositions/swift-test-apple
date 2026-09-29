@@ -2,7 +2,7 @@
 // Copyright (c) 2024-2026 Coen ten Thije Boonkkamp and project authors
 // Licensed under Apache License v2.0
 
-public import Source_Primitives
+public import Source
 public import Test
 internal import struct Testing.Attachment
 internal import struct Testing.Comment
