@@ -2,6 +2,7 @@
 // Copyright (c) 2024-2026 Coen ten Thije Boonkkamp and project authors
 // Licensed under Apache License v2.0
 
+internal import Byte
 public import Source
 public import Test
 internal import struct Testing.Attachment
@@ -29,37 +30,31 @@ extension Test.Apple {
 }
 
 extension Test.Apple.Recorder {
-    public var neutral: Test.Recorder {
-        .init(
-            issue: { issue in self.record(issue) },
-            attachment: { attachment in self.record(attachment) }
-        )
-    }
-
     public func record(_ issue: Test.Issue) {
-        let comment = Testing.Comment(rawValue: "\(issue.kind): \(issue.message.plain)")
-        record(issue, comment: comment, source: Test.Apple.source(issue.source ?? source))
+        let comment = comment(for: issue)
+        let location = Test.Apple.source(issue.sourceLocation ?? source)
+        if issue.isKnown {
+            Testing.withKnownIssue(comment, sourceLocation: location) {
+                Testing.Issue.record(comment, severity: .error, sourceLocation: location)
+            }
+        } else {
+            Testing.Issue.record(comment, severity: .error, sourceLocation: location)
+        }
     }
 
     public func record(_ attachment: Test.Attachment) {
-        Testing.Attachment<[UInt8]>.record(
-            attachment.octets,
+        Testing.Attachment.record(self.attachment(for: attachment), sourceLocation: Test.Apple.source(source))
+    }
+
+    func comment(for issue: Test.Issue) -> Testing.Comment {
+        Testing.Comment(rawValue: issue.context.map { "\(issue.kind): \($0.plainText)" } ?? "\(issue.kind)")
+    }
+
+    func attachment(for attachment: Test.Attachment) -> Testing.Attachment<[UInt8]> {
+        Testing.Attachment(
+            attachment.bytes.map(\.bitPattern),
             named: attachment.name,
             sourceLocation: Test.Apple.source(source)
         )
-    }
-
-    private func record(
-        _ issue: Test.Issue,
-        comment: Testing.Comment,
-        source: Testing.SourceLocation
-    ) {
-        if issue.isKnown {
-            Testing.withKnownIssue(comment, sourceLocation: source) {
-                Testing.Issue.record(comment, severity: .error, sourceLocation: source)
-            }
-        } else {
-            Testing.Issue.record(comment, severity: .error, sourceLocation: source)
-        }
     }
 }

@@ -22,6 +22,10 @@ let package = Package(
             url: "https://github.com/swift-molecules/swift-source.git",
             branch: "main"
         ),
+        .package(url: "https://github.com/swift-atoms/swift-text.git", branch: "main", traits: ["Byte"]),
+        .package(url: "https://github.com/swift-atoms/swift-tagged.git", branch: "main"),
+        .package(url: "https://github.com/swift-atoms/swift-cardinal.git", branch: "main"),
+        .package(url: "https://github.com/swift-atoms/swift-byte.git", branch: "main"),
     ],
     targets: [
         .target(
@@ -29,6 +33,10 @@ let package = Package(
             dependencies: [
                 .product(name: "Test", package: "swift-test"),
                 .product(name: "Source", package: "swift-source"),
+                .product(name: "Text", package: "swift-text"),
+                .product(name: "Tagged", package: "swift-tagged"),
+                .product(name: "Cardinal", package: "swift-cardinal"),
+                .product(name: "Byte", package: "swift-byte"),
             ]
         ),
         .testTarget(

@@ -2,9 +2,12 @@
 // Copyright (c) 2024-2026 Coen ten Thije Boonkkamp and project authors
 // Licensed under Apache License v2.0
 
+internal import Cardinal
 public import Source
+internal import Tagged
 public import Test
 public import struct Testing.SourceLocation
+internal import Text
 
 extension Test.Apple {
     public static func source(_ source: Source.Location) -> Testing.SourceLocation {

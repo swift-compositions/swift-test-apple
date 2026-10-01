@@ -1,7 +1,9 @@
 import Source
 internal import Test
-import Test_Apple
+@testable import Test_Apple
 import Testing
+
+typealias NeutralTest = Test::Test
 
 enum Relation {}
 
@@ -17,28 +19,57 @@ extension Relation {
                 #expect(apple.column == 9)
             }
 
-            @Test func `known neutral issues map to known Apple issues`() {
-                let recorder = NeutralTest.Apple.Recorder().neutral
-                recorder(.init(kind: .system, message: "expected adapter probe", isKnown: true))
+            @Test func `an issue with its own source and context records both on the current Apple test`() {
+                let recorder = NeutralTest.Apple.Recorder()
+                let kind = NeutralTest.Issue.Kind.system("adapter probe")
+                let expected = "\(kind): expected adapter context"
+                withKnownIssue {
+                    recorder.record(
+                        NeutralTest.Issue(
+                            kind: kind,
+                            sourceLocation: Source.Location(fileID: "Probe/Issue.swift", filePath: "/tmp/Issue.swift", line: 23, column: 5),
+                            context: "expected adapter context"
+                        )
+                    )
+                } matching: { issue in
+                    issue.comments.map(\.rawValue) == [expected]
+                        && issue.sourceLocation?.fileID == "Probe/Issue.swift"
+                        && issue.sourceLocation?.filePath == "/tmp/Issue.swift"
+                        && issue.sourceLocation?.line == 23
+                        && issue.sourceLocation?.column == 5
+                }
             }
 
-            @Test func `neutral attachments map to Apple attachments`() {
-                let recorder = NeutralTest.Apple.Recorder().neutral
-                recorder.record(.init(name: "probe.txt", text: "attachment probe"))
+            @Test func `an issue without source or context falls back to the recorder source and the bare kind`() {
+                let recorder = NeutralTest.Apple.Recorder(
+                    source: Source.Location(fileID: "Probe/Fallback.swift", filePath: "/tmp/Fallback.swift", line: 41, column: 3)
+                )
+                let kind = NeutralTest.Issue.Kind.apiMisused("fallback probe")
+                let expected = "\(kind)"
+                withKnownIssue {
+                    recorder.record(NeutralTest.Issue(kind: kind))
+                } matching: { issue in
+                    issue.comments.map(\.rawValue) == [expected]
+                        && issue.sourceLocation?.fileID == "Probe/Fallback.swift"
+                        && issue.sourceLocation?.line == 41
+                        && issue.sourceLocation?.column == 3
+                }
             }
-        }
 
-        @Suite struct `Edge Case` {
-            @Test func `local modifiers produce a nonrecursive Apple trait`() {
-                let trait = NeutralTest.Apple.Trait(Probe.Modifier(inheritance: .local))
-                #expect(!trait.isRecursive)
+            @Test func `a known neutral issue is recorded as a known Apple issue`() {
+                NeutralTest.Apple.Recorder().record(
+                    NeutralTest.Issue(kind: .system("expected known adapter probe"), isKnown: true)
+                )
             }
-        }
 
-        @Suite struct Integration {
-            @Test(NeutralTest.Apple.Trait(Probe.Modifier()))
-            func `generic trait installs neutral context`() {
-                #expect(NeutralTest.Context.current != nil)
+            @Test func `a neutral attachment keeps its name and exact bytes`() {
+                let recorder = NeutralTest.Apple.Recorder()
+                let neutral = NeutralTest.Attachment(name: "probe.txt", string: "h\u{E9}llo \u{FF}\u{0}")
+                let apple = recorder.attachment(for: neutral)
+                #expect(apple.preferredName == "probe.txt")
+                #expect(apple.attachableValue == Array("h\u{E9}llo \u{FF}\u{0}".utf8))
+                #expect(apple.attachableValue.count == neutral.bytes.count)
+                recorder.record(neutral)
             }
         }
     }
