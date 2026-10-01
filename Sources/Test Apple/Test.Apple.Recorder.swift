@@ -16,15 +16,17 @@ extension Test.Apple {
     public struct Recorder: Sendable {
         public let source: Source.Location
 
-        public init(
-            source: Source.Location = .init(
-                fileID: #fileID,
-                filePath: #filePath,
-                line: #line,
-                column: #column
-            )
-        ) {
+        public init(source: Source.Location) {
             self.source = source
+        }
+
+        public init(
+            fileID: Swift.String = #fileID,
+            filePath: Swift.String = #filePath,
+            line: Int = #line,
+            column: Int = #column
+        ) {
+            self.init(source: Source.Location(fileID: fileID, filePath: filePath, line: line, column: column))
         }
     }
 }

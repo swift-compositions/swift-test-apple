@@ -56,6 +56,28 @@ extension Relation {
                 }
             }
 
+            @Test func `two direct recorder constructions fall back to their own call sites`() {
+                let (first, firstLine) = (NeutralTest.Apple.Recorder(), #line)
+                let (secondLine, second) = (#line, NeutralTest.Apple.Recorder())
+                let sites = [(first, firstLine, 69), (second, secondLine, 78)]
+                for (recorder, line, column) in sites {
+                    let apple = NeutralTest.Apple.source(recorder.source)
+                    #expect(apple.fileID == #fileID)
+                    #expect(apple.filePath == #filePath)
+                    #expect(apple.line == line)
+                    #expect(apple.column == column)
+                }
+                for (recorder, line, column) in sites {
+                    withKnownIssue {
+                        recorder.record(NeutralTest.Issue(kind: .system("call-site probe")))
+                    } matching: { issue in
+                        issue.sourceLocation?.fileID == #fileID
+                            && issue.sourceLocation?.line == line
+                            && issue.sourceLocation?.column == column
+                    }
+                }
+            }
+
             @Test func `a known neutral issue is recorded as a known Apple issue`() {
                 NeutralTest.Apple.Recorder().record(
                     NeutralTest.Issue(kind: .system("expected known adapter probe"), isKnown: true)
