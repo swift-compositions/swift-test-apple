@@ -1,7 +1,3 @@
-// This source file is part of the swift-test-apple open source project
-// Copyright (c) 2024-2026 Coen ten Thije Boonkkamp and project authors
-// Licensed under Apache License v2.0
-
 internal import Cardinal
 public import Source
 internal import Tagged

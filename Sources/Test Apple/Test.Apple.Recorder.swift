@@ -1,7 +1,3 @@
-// This source file is part of the swift-test-apple open source project
-// Copyright (c) 2024-2026 Coen ten Thije Boonkkamp and project authors
-// Licensed under Apache License v2.0
-
 internal import Byte
 public import Source
 public import Test
@@ -12,7 +8,6 @@ internal import struct Testing.SourceLocation
 internal import func Testing.withKnownIssue
 
 extension Test.Apple {
-    /// Explicitly maps neutral issues and attachments into the current Apple test.
     public struct Recorder: Sendable {
         public let source: Source.Location
 
@@ -21,8 +16,8 @@ extension Test.Apple {
         }
 
         public init(
-            fileID: Swift.String = #fileID,
-            filePath: Swift.String = #filePath,
+            fileID: Swift::String = #fileID,
+            filePath: Swift::String = #filePath,
             line: Int = #line,
             column: Int = #column
         ) {
