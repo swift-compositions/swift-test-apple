@@ -1,7 +1,8 @@
 import Source
 internal import Test
-@testable import Test_Apple
 import Testing
+
+@testable import Test_Apple
 
 typealias NeutralTest = Test::Test
 

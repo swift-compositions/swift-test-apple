@@ -2,8 +2,9 @@ internal import Cardinal
 public import Source
 internal import Tagged
 public import Test
-public import struct Testing.SourceLocation
 internal import Text
+
+public import struct Testing.SourceLocation
 
 extension Test.Apple {
     public static func source(_ source: Source.Location) -> Testing.SourceLocation {
