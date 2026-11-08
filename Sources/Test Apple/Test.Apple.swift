@@ -1,8 +1,9 @@
-public import Test
 internal import Cardinal
 public import Source
 internal import Tagged
+public import Test
 internal import Text
+
 public import struct Testing.SourceLocation
 
 extension Test {
