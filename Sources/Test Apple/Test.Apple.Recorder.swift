@@ -45,7 +45,12 @@ extension Test.Apple.Recorder {
     }
 
     func comment(for issue: Test.Issue) -> Testing.Comment {
-        Testing.Comment(rawValue: issue.context.map { "\(issue.kind): \($0.plainText)" } ?? "\(issue.kind)")
+        let headline: Swift::String
+        switch issue.kind {
+        case .unconditional(let text): headline = text.plainText
+        default: headline = "\(issue.kind)"
+        }
+        return Testing.Comment(rawValue: issue.context.map { "\(headline): \($0.plainText)" } ?? headline)
     }
 
     func attachment(for attachment: Test.Attachment) -> Testing.Attachment<[UInt8]> {

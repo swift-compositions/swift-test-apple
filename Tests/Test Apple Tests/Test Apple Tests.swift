@@ -79,6 +79,15 @@ extension Relation {
                 }
             }
 
+            @Test func `an unconditional issue reads as its own text, as Swift Testing's own record does`() {
+                let recorder = NeutralTest.Apple.Recorder()
+                #expect(recorder.comment(for: NeutralTest.Issue(kind: .unconditional("plain words"))).rawValue == "plain words")
+                #expect(
+                    recorder.comment(for: NeutralTest.Issue(kind: .unconditional("plain words"), context: "while testing")).rawValue
+                        == "plain words: while testing"
+                )
+            }
+
             @Test func `a severity maps to the same Apple severity`() {
                 #expect(NeutralTest.Apple.severity(.warning) == .warning)
                 #expect(NeutralTest.Apple.severity(.error) == .error)
