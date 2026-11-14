@@ -79,6 +79,17 @@ extension Relation {
                 }
             }
 
+            @Test func `a severity maps to the same Apple severity`() {
+                #expect(NeutralTest.Apple.severity(.warning) == .warning)
+                #expect(NeutralTest.Apple.severity(.error) == .error)
+            }
+
+            @Test func `a warning is recorded as a warning and does not fail the test`() {
+                NeutralTest.Apple.Recorder().record(
+                    NeutralTest.Issue(kind: .system("warning probe"), severity: .warning)
+                )
+            }
+
             @Test func `a known neutral issue is recorded as a known Apple issue`() {
                 NeutralTest.Apple.Recorder().record(
                     NeutralTest.Issue(kind: .system("expected known adapter probe"), isKnown: true)

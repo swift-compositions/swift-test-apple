@@ -30,12 +30,13 @@ extension Test.Apple.Recorder {
     public func record(_ issue: Test.Issue) {
         let comment = comment(for: issue)
         let location = Test.Apple.source(issue.sourceLocation ?? source)
+        let severity = Test.Apple.severity(issue.severity)
         if issue.isKnown {
             Testing.withKnownIssue(comment, sourceLocation: location) {
-                Testing.Issue.record(comment, severity: .error, sourceLocation: location)
+                Testing.Issue.record(comment, severity: severity, sourceLocation: location)
             }
         } else {
-            Testing.Issue.record(comment, severity: .error, sourceLocation: location)
+            Testing.Issue.record(comment, severity: severity, sourceLocation: location)
         }
     }
 
